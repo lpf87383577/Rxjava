@@ -363,3 +363,46 @@ observableMap.subscribe(observer)
 
 ```
 ![avatar](map.png)
+
+### 配合动态权限申请
+```
+//引入库
+    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
+
+
+ RxPermissions rxPermissions=new RxPermissions(this);
+ 
+ //申请权限，返回一个结果，全部同意放回true，一个不同意放回false
+        rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.CALL_PHONE,Manifest.permission.INTERNET).subscribe(new Consumer<Boolean>() {
+            @Override
+            public void accept(Boolean aBoolean) throws Exception {
+                if (aBoolean){
+                    //申请的权限全部允许
+                    Toast.makeText(MainActivity.this, "允许了权限!", Toast.LENGTH_SHORT).show();
+
+                }else{
+                    //只要有一个权限被拒绝，就会执行
+                    Toast.makeText(MainActivity.this, "未授权权限，部分功能不能使用", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        
+
+//申请权限，返回多个结果，不同权限不同结果
+        rxPermissions.requestEach(Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE)
+                .subscribe(new Consumer<Permission>() {
+                    @Override
+                    public void accept(Permission value) throws Exception {
+                        if (value.granted) {
+                            Log.e("lpf--111",value.granted+value.name);
+                        } else if (value.shouldShowRequestPermissionRationale) {
+
+                            Log.e("lpf--222",value.shouldShowRequestPermissionRationale+value.name);
+                        } else {
+                            Log.e("lpf--333", value.name);
+                        }
+                    }
+                });        
+        
+    
+```
